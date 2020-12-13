@@ -20,6 +20,7 @@ void parse_line();
 void read_line();
 void help_exit();
 void help_help();
+void quit();
 
 //List of functions pointers corresponding to each command
 int (*commands_func[])(){
@@ -58,6 +59,10 @@ void help_exit(){
     Serial.println("This will exit the CLI. To restart the CLI, restart the program.");
 }
 
+void quit(){
+    Serial.println("QUIT THE PROGRAM.");
+}
+
 void cmd_help(){
     if(args[1] == NULL){
         help_help();
@@ -70,6 +75,15 @@ void cmd_help(){
     }
     else{
         help_help();
+    }
+}
+
+void cmd_quit(){
+    if(args[1] == NULL){
+    	quit();
+    }
+    else{
+    	quit();
     }
 }
 
@@ -96,10 +110,12 @@ void read_line(){
 		}
 	}
 	Serial.println("");
-	//line_string = Serial.readStringUntil(13);
 	if(line_string.length() < LINE_BUF_SIZE){
 	  line_string.toCharArray(line, LINE_BUF_SIZE);
 	  /*
+	   *
+	   * DEBUG TIPS.
+	   *
 	  Serial.print("Line String :");
 	  Serial.print(line_string);
 	  Serial.println("|");
@@ -138,9 +154,9 @@ void parse_line(){
 }
 
 int execute(){
-    for(int i=0; i<num_commands; i++){
-        if(strcmp(args[0], commands_str[i]) == 0){
-            return(*commands_func[i])();
+    for(int i=0; i<num_commands; i++){ // On parcours la liste des commandes
+        if(strcmp(args[0], commands_str[i]) == 0){ //Si la commande correspond à une commande de la liste
+            return(*commands_func[i])(); //ON appelle la fonction
         }
     }
 
@@ -166,8 +182,8 @@ void my_cli(){
     if(!error_flag){
         execute();
     }
-    //memset(line, 0, LINE_BUF_SIZE);
-    //memset(args, 0, sizeof(args[0][0]) * MAX_NUM_ARGS * ARG_BUF_SIZE);
+    memset(line, 0, LINE_BUF_SIZE); //Suppression de l'ancienne commande
+    memset(args, 0, sizeof(args[0][0]) * MAX_NUM_ARGS * ARG_BUF_SIZE); //Suppression des anciens arguments
 
     error_flag = false;
     my_cli(); //Rebouclage de la CLI
